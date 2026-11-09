@@ -1,0 +1,26 @@
+{
+  "name": "aurelia-grand-hotel",
+  "version": "1.2.0",
+  "description": "Full-stack reservation and hospitality platform for Aurelia Grand Hotel.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "hotel",
+    "booking-engine",
+    "express",
+    "rest-api",
+    "vanilla-js"
+  ],
+  "author": "vester",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
