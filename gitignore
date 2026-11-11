@@ -1,0 +1,6 @@
+.env
+guestbook.db
+guestbook.db-journal
+guestbook.db-wal
+guestbook.db-shm
+node_modules/

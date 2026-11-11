@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Concierge Admin | Aurelia Grand Hotel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav solid">
+    <a href="index.html" class="logo">Aurelia Grand <small>ADMIN CONSOLE</small></a>
+    <nav><a href="index.html">&larr; Back to Hotel</a></nav>
+  </header>
+
+  <main>
+    <section class="page-head">
+      <h1>Hotel Admin Dashboard</h1>
+      <p>View room orders and moderate guestbook reviews using your <code>ADMIN_KEY</code> from <code>api/.env</code>.</p>
+    </section>
+
+    <section class="section beige">
+      <form id="adminAuthForm" class="toolbar" style="background:#fff;padding:1.2rem;border:1px solid var(--gold)">
+        <label style="flex:1">Admin Key (X-Admin-Key)
+          <input type="password" id="adminKeyInput" placeholder="Enter ADMIN_KEY (aurelia-secret-2026)" required>
+        </label>
+        <button type="submit" class="btn">Load Dashboard</button>
+      </form>
+      <p id="adminStatus" class="error" role="alert"></p>
+
+      <h2 style="margin-top:2rem">Room Orders (Bookings)</h2>
+      <div id="ordersList" class="gb-list">
+        <p>Enter your Admin Key above to view room orders.</p>
+      </div>
+
+      <h2 style="margin-top:3rem">Guestbook Moderation</h2>
+      <div id="adminList" class="gb-list">
+        <p>Enter your Admin Key above to view guestbook messages.</p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    const API = 'http://localhost:3000/api';
+    const form = document.querySelector('#adminAuthForm');
+    const keyInput = document.querySelector('#adminKeyInput');
+    const statusEl = document.querySelector('#adminStatus');
+    const ordersEl = document.querySelector('#ordersList');
+    const listEl = document.querySelector('#adminList');
+
+    keyInput.value = sessionStorage.getItem('aurelia_admin_key') || '';
+
+    async function loadDashboard() {
+      const key = keyInput.value.trim();
+      if (!key) return;
+      statusEl.textContent = '';
+
+      try {
+        const [msgRes, ordRes] = await Promise.all([
+          fetch(`${API}/admin/messages`, { headers: { 'X-Admin-Key': key } }),
+          fetch(`${API}/admin/bookings`, { headers: { 'X-Admin-Key': key } })
+        ]);
+
+        if (msgRes.status === 401 || ordRes.status === 401) {
+          statusEl.textContent = '401 Unauthorized: Invalid ADMIN_KEY.';
+          return;
+        }
+
+        sessionStorage.setItem('aurelia_admin_key', key);
+        const messages = await msgRes.json();
+        const bookings = await ordRes.json();
+
+        // Render Room Orders
+        if (bookings.length === 0) {
+          ordersEl.textContent = 'No room orders placed yet.';
+        } else {
+          ordersEl.replaceChildren(...bookings.map(b => {
+            const card = document.createElement('article');
+            card.className = 'gb-card';
+
+            const head = document.createElement('div');
+            head.className = 'gb-card-head';
+
+            const title = document.createElement('h3');
+            title.textContent = `${b.reference} · ${b.room_name}`;
+
+            const priceBadge = document.createElement('span');
+            priceBadge.className = 'badge-ok';
+            priceBadge.textContent = `$${b.total_price} (${b.nights} night${b.nights > 1 ? 's' : ''})`;
+
+            head.append(title, priceBadge);
+
+            const details = document.createElement('p');
+            details.textContent = `Check-in: ${b.check_in} → Check-out: ${b.check_out} | Guests: ${b.adults} adult(s), ${b.children} child(ren)`;
+
+            const actions = document.createElement('div');
+            actions.className = 'actions';
+            const delBtn = document.createElement('button');
+            delBtn.className = 'chip';
+            delBtn.textContent = 'Cancel Order';
+            delBtn.onclick = async () => {
+              await fetch(`${API}/admin/bookings/${b.id}`, {
+                method: 'DELETE',
+                headers: { 'X-Admin-Key': key }
+              });
+              loadDashboard();
+            };
+            actions.append(delBtn);
+
+            card.append(head, details, actions);
+            return card;
+          }));
+        }
+
+        // Render Guestbook Messages
+        listEl.replaceChildren(...messages.map(m => {
+          const card = document.createElement('article');
+          card.className = 'gb-card';
+
+          const head = document.createElement('div');
+          head.className = 'gb-card-head';
+
+          const who = document.createElement('h3');
+          who.textContent = `#${m.id} · ${m.author}`;
+
+          const badge = document.createElement('span');
+          badge.className = m.approved ? 'badge-ok' : 'badge-pending';
+          badge.textContent = m.approved ? 'Approved (Visible)' : 'Hidden (Pending)';
+
+          head.append(who, badge);
+
+          const msg = document.createElement('p');
+          msg.textContent = m.message;
+
+          const actions = document.createElement('div');
+          actions.className = 'actions';
+
+          if (!m.approved) {
+            const appBtn = document.createElement('button');
+            appBtn.className = 'btn';
+            appBtn.textContent = 'Approve';
+            appBtn.onclick = async () => {
+              await fetch(`${API}/admin/messages/${m.id}/approve`, {
+                method: 'PATCH',
+                headers: { 'X-Admin-Key': key }
+              });
+              loadDashboard();
+            };
+            actions.append(appBtn);
+          }
+
+          const delBtn = document.createElement('button');
+          delBtn.className = 'chip';
+          delBtn.textContent = 'Delete';
+          delBtn.onclick = async () => {
+            await fetch(`${API}/admin/messages/${m.id}`, {
+              method: 'DELETE',
+              headers: { 'X-Admin-Key': key }
+            });
+            loadDashboard();
+          };
+          actions.append(delBtn);
+
+          card.append(head, msg, actions);
+          return card;
+        }));
+      } catch {
+        statusEl.textContent = 'Failed to reach API at http://localhost:3000';
+      }
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      loadDashboard();
+    });
+
+    if (keyInput.value) loadDashboard();
+  </script>
+</body>
+</html>

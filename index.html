@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aurelia Grand Hotel | Luxury Residence &amp; Spa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="index">
+  <header class="nav" id="nav">
+    <a href="#index" class="logo">Aurelia Grand <small>EST. 1928</small></a>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <nav id="menu">
+      <a href="#index" data-page="index">Home</a>
+      <a href="#rooms" data-page="rooms">Rooms</a>
+      <a href="#facilities" data-page="facilities">Facilities</a>
+      <a href="#about" data-page="about">About</a>
+      <a href="#gallery" data-page="gallery">Gallery</a>
+      <a href="#booking" data-page="booking">Book</a>
+      <a href="#contact" data-page="contact">Contact</a>
+      <a href="admin.html" class="admin-link">Admin</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HOME PAGE -->
+    <div class="page active" id="page-index">
+      <section class="hero" id="home" data-img="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80">
+        <div class="hero-text">
+          <p class="kicker">Aurelia Grand Hotel &middot; <span id="rotator">Rooms</span></p>
+          <h1>Experience Luxury Beyond Expectations.</h1>
+          <p>Five-star heritage suites, an award-winning kitchen and a thermal spa above the Old Town, all under one roof.</p>
+          <div class="actions">
+            <a href="#booking" class="btn">Book Your Stay</a>
+            <a href="#rooms" class="btn btn-outline">Explore Suites</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Stay with us</h2>
+        <div class="grid small">
+          <a class="tease" href="#rooms"><h3>Rooms &amp; suites</h3><p>Four curated suite classes from $120 a night.</p><span>View rooms &rarr;</span></a>
+          <a class="tease" href="#facilities"><h3>Pool, spa &amp; dining</h3><p>Rooftop infinity pool &amp; fine dining open daily.</p><span>See facilities &rarr;</span></a>
+          <a class="tease" href="#booking"><h3>Book directly</h3><p>Pick your dates and calculate your instant rate.</p><span>Check availability &rarr;</span></a>
+        </div>
+      </section>
+
+      <!-- LESSON 6 GUESTBOOK SECTION -->
+      <section class="section beige" id="guestbook">
+        <div class="gb-header">
+          <div>
+            <p class="kicker" style="color:var(--gold-d);margin-bottom:.3rem">LIVE SQLITE BACKEND</p>
+            <h2 style="margin-bottom:.3rem">Verified Guestbook</h2>
+            <p class="gb-count" id="guestbook-count">Loading entries...</p>
+          </div>
+          <a href="admin.html" class="chip">Moderate Guestbook (Admin) &rarr;</a>
+        </div>
+
+        <div class="gb-layout">
+          <div class="gb-list" id="guestbook-list" aria-live="polite"></div>
+
+          <form id="guestbook-form" class="gb-form" novalidate>
+            <h3>Leave a Review</h3>
+            <p class="amen">Entries are stored in SQLite and appear after concierge approval.</p>
+            <label>Your Name (1–50 chars)
+              <input type="text" name="author" placeholder="e.g. Dilnoza, Tashkent" required maxlength="50">
+            </label>
+            <label>Your Experience (3–300 chars)
+              <textarea name="message" rows="4" placeholder="Share your thoughts on our suites, dining, or spa..." required maxlength="300"></textarea>
+            </label>
+            <button type="submit" class="btn">Submit to Guestbook</button>
+            <p id="gb-note" class="gb-note" role="status"></p>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <!-- ROOMS PAGE -->
+    <div class="page" id="page-rooms">
+      <section class="page-head"><h1>Rooms &amp; suites</h1><p>Choose a room, then book it on the next page.</p></section>
+      <section class="section beige">
+        <div class="filters" id="filters">
+          <button class="chip active" data-filter="all">All rooms</button>
+          <button class="chip" data-filter="under200">Under $200</button>
+          <button class="chip" data-filter="suite">Suites</button>
+        </div>
+        <div class="toolbar">
+          <input type="search" id="roomSearch" placeholder="Search rooms..." aria-label="Search rooms">
+          <select id="roomSort" aria-label="Sort rooms">
+            <option value="default">Sort: featured</option>
+            <option value="low">Price: low to high</option>
+            <option value="high">Price: high to low</option>
+          </select>
+          <span class="favs" id="favCount">Saved: 0</span>
+        </div>
+        <div class="grid" id="roomGrid"></div>
+      </section>
+    </div>
+
+    <!-- FACILITIES PAGE -->
+    <div class="page" id="page-facilities">
+      <section class="page-head"><h1>Hotel facilities</h1><p>Included with every stay.</p></section>
+      <section class="section">
+        <div class="grid small" id="facilityGrid"></div>
+        <div class="actions"><a class="btn" href="#booking">Book your stay</a></div>
+      </section>
+    </div>
+
+    <!-- ABOUT PAGE -->
+    <div class="page" id="page-about">
+      <section class="page-head"><h1>About us</h1><p>Our philosophy of hospitality &amp; architecture.</p></section>
+      <section class="section navy about">
+        <div>
+          <p>Aurelia Grand opened with one idea: a guest should never have to ask twice. Our team learns your name at check-in and your preferences by the second morning.</p>
+          <p>We believe hospitality is attention. Fresh linen at the right hour, a table by the window, a driver already waiting at arrivals. Every detail is quiet, and every detail is deliberate.</p>
+        </div>
+        <div class="stats" id="stats"></div>
+      </section>
+      <section class="section" id="lessons">
+        <h2>System Architecture</h2>
+        <div class="tabs" id="lessonTabs" role="tablist"></div>
+        <div class="lesson" id="lessonBody"></div>
+      </section>
+    </div>
+
+    <!-- GALLERY PAGE -->
+    <div class="page" id="page-gallery">
+      <section class="page-head"><h1>Gallery</h1><p>Tap a picture to enlarge it.</p></section>
+      <section class="section"><div class="gallery" id="galleryGrid"></div></section>
+    </div>
+
+    <!-- BOOKING PAGE -->
+    <div class="page" id="page-booking">
+      <section class="page-head"><h1>Book your stay</h1><p>Choose your dates and see the total before you confirm.</p></section>
+      <section class="section booking">
+        <form id="bookingForm" novalidate>
+          <label>Check-in <input type="date" id="checkin" required></label>
+          <label>Check-out <input type="date" id="checkout" required></label>
+          <label>Adults <input type="number" id="adults" min="1" max="6" value="2"></label>
+          <label>Children <input type="number" id="children" min="0" max="4" value="0"></label>
+          <label>Room <select id="roomSelect"></select></label>
+          <button class="btn" type="submit">Search availability</button>
+        </form>
+        <p class="live" id="livePrice">Pick your dates to see the price.</p>
+        <p class="error" id="bookingError" role="alert"></p>
+        <div class="summary" id="summary" hidden></div>
+      </section>
+    </div>
+
+    <!-- CONFIRMATION PAGE -->
+    <div class="page" id="page-confirmation">
+      <section class="page-head"><h1>Booking confirmation</h1><p>Your stay at a glance.</p></section>
+      <section class="section"><div id="confirmBox"></div></section>
+    </div>
+
+    <!-- CONTACT PAGE -->
+    <div class="page" id="page-contact">
+      <section class="page-head"><h1>Contact</h1><p>We reply within one business day.</p></section>
+      <section class="section beige contact">
+        <div>
+          <p>12 Gold Avenue, Old Town<br>Phone: +1 555 010 2030<br>Email: stay@aureliagrand.com</p>
+          <div class="map" role="img" aria-label="Map location">12 Gold Avenue &middot; Historic Quarter</div>
+        </div>
+        <form id="contactForm" novalidate>
+          <label>Name <input type="text" id="cName"></label>
+          <label>Email <input type="email" id="cEmail"></label>
+          <label>Message <textarea id="cMsg" rows="4"></textarea></label>
+          <button class="btn" type="submit">Send message</button>
+          <p class="error" id="contactError" role="alert"></p>
+          <p class="success" id="contactOk" role="status"></p>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <footer>&copy; 2026 Aurelia Grand Hotel &middot; Full-Stack Node.js &amp; SQLite Edition</footer>
+  <div class="toast" id="toast" role="status"></div>
+  <div class="lightbox" id="lightbox" hidden><span id="lbText"></span></div>
+
+  <script src="script.js"></script>
+  <script type="module" src="guestbook.js"></script>
+</body>
+</html>

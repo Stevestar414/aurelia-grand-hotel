@@ -1,0 +1,10 @@
+{
+  "name": "api",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch --env-file=.env server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
